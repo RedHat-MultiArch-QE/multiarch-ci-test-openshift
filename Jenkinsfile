@@ -3,11 +3,16 @@ properties(
     pipelineTriggers(
       [
         [
-          $class: 'CIBuildTrigger',
-          checks: [],
-          overrides: [topic: "Consumer.rh-jenkins-ci-plugin.6046262a-ae76-40a2-a577-efc648745bbc.VirtualTopic.eng.brew.>"],
-          providerName: 'Red Hat UMB',
-          selector: 'name = \'atomic-openshift\' AND type = \'Tag\' AND tag LIKE \'rhaos-%-rhel-%-candidate\''
+          $class: 'CIBuildTrigger', 
+          noSquash: true, 
+          providerData: 
+          [
+            $class: 'ActiveMQSubscriberProviderData', 
+            name: 'Red Hat UMB', 
+            overrides: [topic: 'Consumer.rh-jenkins-ci-plugin.6046262a-ae76-40a2-a577-efc648745bbc.VirtualTopic.eng.brew.>'], 
+            selector: 'name = \'atomic-openshift\' AND type = \'Tag\' AND tag LIKE \'rhaos-%-rhel-%-candidate\'', 
+            timeout: null
+          ]
         ]
       ]
     ),
@@ -24,7 +29,7 @@ properties(
           name: 'LIBRARIES_REPO'
         ),
         string(
-          defaultValue: 'v1.2.0',
+          defaultValue: 'v1.2.1',
           description: 'Git reference to the branch or tag of shared libraries.',
           name: 'LIBRARIES_REF'
         ),
