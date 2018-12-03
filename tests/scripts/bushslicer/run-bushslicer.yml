@@ -1,0 +1,43 @@
+---
+- hosts: master
+
+  vars:
+    bushslicer_env:
+      BUSHSLICER_DEFAULT_ENVIRONMENT: 'ose'
+      OPENSHIFT_ENV_OSE_USER_MANAGER_USERS: 'system:admin,developer:developer'
+      OPENSHIFT_ENV_OSE_HOSTS: 'localhost:8443:etcd:master:node'
+      OPENSHIFT_ENV_ORIGIN_USER_MANAGER_USERS: 'system:admin,developer:developer'
+      OPENSHIFT_ENV_ORIGIN_HOSTS: 'localhost:8443:etcd:master:node'
+      BUSHSLICER_DEBUG_AFTER_FAIL: 'false'
+      BUSHSLICER_HOME: '~/bushslicer'
+
+  tasks:
+    - file:
+        path: artifacts
+        state: directory
+        mode: 0755
+
+    - shell: '. ~/.bash_profile; cucumber -p junit features/cli/create.feature --format html -o ../artifacts/cli_create-feature.html'
+      args:
+        chdir: verification-tests
+        executable: /bin/bash
+        creates: artifacts/cli_create-feature.txt
+      ignore_errors: yes
+      environment: "{{ bushslicer_env }}"
+
+    - shell: '. ~/.bash_profile; cucumber -p junit features/web/build.feature --format html -o ../artifacts/web_build-feature.html'
+      args:
+        chdir: verification-tests
+        executable: /bin/bash
+        creates: artifacts/web_build-feature.txt
+      ignore_errors: yes
+      environment: "{{ bushslicer_env }}"
+
+    - shell: '. ~/.bash_profile; cucumber -p junit --tags @smoke --format html -o ../artifacts/smoke-feature.html'
+      args:
+        chdir: verification-tests
+        executable: /bin/bash
+        creates: artifacts/smoke-tests.txt
+      when: ENABLE_SMOKE_TESTS is defined
+      ignore_errors: yes
+      environment: "{{ bushslicer_env }}"

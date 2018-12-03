@@ -1,0 +1,44 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+ 
+[OSEv3:vars]
+openshift_deployment_type='openshift-enterprise'
+openshift_portal_net=172.30.0.0/16
+ 
+ansible_user=root
+ 
+openshift_disable_check=package_version,disk_availability,docker_storage,memory_availability
+ 
+openshift_docker_insecure_registries=brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
+oreg_url='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-${component}:${version}'
+ 
+openshift_cockpit_deployer_prefix='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/'
+openshift_cockpit_deployer_version='v3.10.83'
+ 
+openshift_service_catalog_image_prefix='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-'
+ansible_service_broker_image_prefix='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-'
+template_service_broker_prefix='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-'
+openshift_web_console_prefix='brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-'
+ 
+osm_etcd_image='registry.access.redhat.com/rhel7/etcd:3.2.22'
+ 
+#things that don't work on ppc yet
+openshift_cluster_monitoring_operator_install=false
+openshift_console_install=false
+ 
+openshift_master_identity_providers=[{'name': 'allow_all', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider'}]
+openshift_auth_type=allowall
+ 
+openshift_release={{ OPENSHIFT_RELEASE }}
+debug_level=5
+ 
+[masters]
+localhost ansible_connection=local
+ 
+[etcd]
+localhost ansible_connection=local
+ 
+[nodes]
+localhost ansible_connection=local openshift_node_group_name="node-config-all-in-one"

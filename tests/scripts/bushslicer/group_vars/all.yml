@@ -1,0 +1,11 @@
+---
+OPENSHIFT_VERSION: "3.10"
+OPENSHIFT_PATCH_VERSION: "83"
+OPENSHIFT_RELEASE: "{{ OPENSHIFT_VERSION + '.' + OPENSHIFT_PATCH_VERSION }}"
+INSECURE_REGISTRY_HOSTNAME: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com"
+INSECURE_REGISTRY_PORT: "8888"
+BASE_DIR_BY_ARCH:
+  x86_64: server
+  ppc64le: power-le
+BASE_PULP_URL: "http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/{{ BASE_DIR_BY_ARCH[ansible_architecture] }}/{{ ansible_distribution_major_version }}/$releasever/$basearch"
+BASE_REPO_URL: "{{ BASE_PULP_URL }}"

@@ -1,1 +1,3 @@
 tests/ansible-playbooks/**/report.d
+*.inventory
+*.retry

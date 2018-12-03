@@ -1,0 +1,85 @@
+---
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+
+- name: install pre-req packages
+  yum:
+    name: 'wget, yum-utils, python-docker-py, iptables-services, skopeo, dnsmasq, conntrack-tools, docker'
+    state: latest
+  become: yes
+
+- name: append the insecure registry
+  lineinfile:
+    path: /etc/sysconfig/docker
+    regexp: '^INSECURE_REGISTRY='
+    line: "INSECURE_REGISTRY='--insecure-registry 172.30.0.0/16{% if INSECURE_REGISTRY_HOSTNAME %} --insecure-registry {{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}{% endif %}'"
+  become: yes
+
+- name: enable, reload, and restart docker service post adding insecure registries
+  systemd:
+    name: docker
+    enabled: true
+    state: restarted
+    daemon_reload: yes
+  become: yes
+
+- name: pull maven agent image for jenkins
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/jenkins-agent-maven-35-rhel7:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull nodejs agent image for jenkins
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/jenkins-agent-nodejs-8-rhel7:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull ose ansible image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/ose-ansible:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull jenkins image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/jenkins-2-rhel7:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull jenkins slave base image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/jenkins-slave-base-rhel7:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull jenkins slave base image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/jenkins-slave-base-rhel7:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull ose deployer image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/ose-deployer:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull ose deployer image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/ose-deployer:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull ose docker registry image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/ose-docker-registry:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull ose pod image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/ose-pod:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull ose haproxy router image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/ose-haproxy-router:v{{ OPENSHIFT_RELEASE }}"
+
+- name: pull registry console image
+  docker_image:
+    name: "{{ INSECURE_REGISTRY_HOSTNAME }}:{{ INSECURE_REGISTRY_PORT }}/openshift3/registry-console:v{{ OPENSHIFT_RELEASE }}"
+
+- name: ensure artifact dir exists
+  file: path={{ playbook_dir }}/artifacts state=directory
+
+- name: create the inventory playbook
+  template:
+    src: "{{ playbook_dir }}/templates/host.inventory.j2"
+    dest: "{{ playbook_dir }}/artifacts/host.inventory"
+    mode: 0644
+

@@ -1,0 +1,18 @@
+---
+- hosts: all
+  roles:
+    - common
+
+- hosts: master
+  roles:
+    - openshift_installer
+
+- hosts: all
+  tasks:
+    - name: ensure artifact dir exists
+      file: path={{ playbook_dir }}/artifacts state=directory
+
+    - name: cp configuration artifacts to parent artifacts directory
+      shell: cp openshift/artifacts/* artifacts
+      args:
+        creates: artifacts/host.inventory

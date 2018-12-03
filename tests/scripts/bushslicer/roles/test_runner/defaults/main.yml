@@ -1,0 +1,6 @@
+---
+certificate_authority_urls:
+  - https://password.corp.redhat.com/legacy.crt
+  - https://password.corp.redhat.com/RH-IT-Root-CA.crt
+  - https://engineering.redhat.com/Eng-CA.crt
+certificate_authority_validate_certs: false

@@ -1,0 +1,13 @@
+---
+  - name: add openshift repo
+    yum_repository:
+      name: "rhel-7-server-ose-{{ OPENSHIFT_VERSION }}-test-rpms"
+      description: "OpenShift {{ OPENSHIFT_VERSION }} repo"
+      baseurl: "{{ BASE_REPO_URL }}/ose/{{ OPENSHIFT_VERSION }}/os/"
+    become: yes
+
+  - name: install openshift rpm
+    yum:
+      name: openshift-ansible-{{ OPENSHIFT_RELEASE }}
+      state: latest
+    become: yes

@@ -1,0 +1,25 @@
+---
+  - name: install yum dependencies
+    yum:
+      name: 'git'
+      state: latest
+    become: yes
+
+  - name: clone the repo
+    git:
+      repo: 'https://github.com/jaypoulz/verification-tests.git'
+      version: jaypoulz-gpg-rhel7-fix
+      dest: verification-tests
+
+  - name: install OS dependencies
+    shell:
+      chdir: verification-tests
+      cmd: './tools/install_os_deps.sh'
+    ignore_errors: yes
+    become: yes
+
+  - name: installs modules based on the contents of bushslicer/Gemfile
+    shell:
+      chdir: verification-tests
+      cmd: 'bash -lc "rvm --default use 2.3.3 && ruby tools/hack_bundle.rb"'
+    become: yes
