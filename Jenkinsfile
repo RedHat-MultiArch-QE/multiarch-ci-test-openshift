@@ -3,14 +3,14 @@ properties(
     pipelineTriggers(
       [
         [
-          $class: 'CIBuildTrigger', 
-          noSquash: true, 
-          providerData: 
-          [
-            $class: 'ActiveMQSubscriberProviderData', 
-            name: 'Red Hat UMB', 
-            overrides: [topic: 'Consumer.rh-jenkins-ci-plugin.6046262a-ae76-40a2-a577-efc648745bbc.VirtualTopic.eng.brew.>'], 
-            selector: 'name = \'atomic-openshift\' AND type = \'Tag\' AND tag LIKE \'rhaos-%-rhel-%-candidate\'', 
+          $class: 'CIBuildTrigger',
+          noSquash: true,
+          providerData:
+            [
+            $class: 'ActiveMQSubscriberProviderData',
+            name: 'Red Hat UMB',
+            overrides: [topic: 'Consumer.rh-jenkins-ci-plugin.767d7fe8-67ec-4151-a8c0-59d8e1a16576.VirtualTopic.eng.brew.>'],
+            selector: 'name = \'atomic-openshift\' AND type = \'Tag\' AND tag LIKE \'rhaos-%-rhel-%-candidate\'',
             timeout: null
           ]
         ]
@@ -239,6 +239,6 @@ MAQEAPI.v1.runParallelMultiArchTest(
     }
   },
   {
-     echo(errorMessages)
+    echo(errorMessages)
   }
 )
